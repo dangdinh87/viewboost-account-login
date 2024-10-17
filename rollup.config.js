@@ -24,4 +24,11 @@ export default {
     terser(),
   ],
   external: ['react', 'react-dom'],
+  exports: {
+    '.': {
+      import: './dist/index.js',
+      require: './dist/index.cjs',
+    },
+  },
+  module: 'dist/index.js',
 };

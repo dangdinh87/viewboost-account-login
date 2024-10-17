@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 interface UseLoginViewBoostProps {
   onSuccess: (code: string) => void;
-  onFailed: (error: string) => void;
+  onFailed?: (error: string) => void;
 }
 
 const useLoginViewBoost = ({ onSuccess, onFailed }: UseLoginViewBoostProps) => {
@@ -16,13 +16,20 @@ const useLoginViewBoost = ({ onSuccess, onFailed }: UseLoginViewBoostProps) => {
     clientKey: string;
     scope: string;
   }) => {
+    localStorage.removeItem('code');
+    localStorage.removeItem('forceLogin');
+
     if (!redirectUrl) {
       console.error('redirectUrl is required');
-      onFailed('redirectUrl is required');
+      onFailed?.('redirectUrl is required');
       return;
     }
 
-    const loginUrl = `https://account.viewboost.xyz/?redirectUrl=${redirectUrl}&clientKey=${clientKey}&responseType=code&scope=${scope}`;
+    if (redirectUrl.endsWith('/')) {
+      redirectUrl = redirectUrl.slice(0, -1);
+    }
+
+    const loginUrl = `https://account.toibit.dev/?redirectUrl=${redirectUrl}&clientKey=${clientKey}&responseType=code&scope=${scope}`;
     window.open(loginUrl);
   };
 
@@ -46,11 +53,10 @@ const useLoginViewBoost = ({ onSuccess, onFailed }: UseLoginViewBoostProps) => {
         if (code) {
           onSuccess(code);
         } else {
-          onFailed('Login failed');
+          onFailed?.('Login failed');
         }
       }
     };
-git 
     window.addEventListener('storage', handleStorageEvent);
 
     return () => {
